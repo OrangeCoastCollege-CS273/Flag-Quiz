@@ -8,6 +8,7 @@ import android.os.Handler;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -125,8 +126,10 @@ public class MainActivity extends AppCompatActivity {
             Collections.shuffle(mAllCountriesList);
         // TODO: Loop through all 4 buttons, enable them all and set them to the first 4 countries
         // TODO: in the all countries list
+            while(mAllCountriesList.subList(0,mButtons.length).contains(mCorrectCountry)) Collections.shuffle(mAllCountriesList);
             for (int i = 0; i < mButtons.length; i++) {
                 mButtons[i].setEnabled(true);
+
                 mButtons[i].setText(mAllCountriesList.get(i).getName());
             }
 
@@ -153,29 +156,36 @@ public class MainActivity extends AppCompatActivity {
         // TODO: then display correct answer in green text.  Also, disable all 4 buttons (can't keep guessing once it's correct)
         if(countryName.equals(mCorrectCountry.getName())) {
             mCorrectGuesses++;
+            mTotalGuesses++;
             mAnswerTextView.setTextColor(ContextCompat.getColor(this, R.color.correct_answer));
             mAnswerTextView.setText(countryName);
             for (Button mButton : mButtons) {
                 mButton.setEnabled(false);
             }
-            Runnable runnable = new Runnable() {
-                @Override
-                public void run() {
-                    loadNextFlag();
-                }
-            };
-            handler.postDelayed(runnable, 1200);
             // TODO: Nested in this decision, if the user has completed all 10 questions, show an AlertDialog
             // TODO: with the statistics and an option to Reset Quiz
             if(mCorrectGuesses == 10) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setMessage(getString(R.string.results, mTotalGuesses, (mCorrectGuesses / mTotalGuesses)));
+                Log.i(TAG, "Correct guesses: " + mCorrectGuesses + ", Total Guesses: " + mTotalGuesses + ", Answer: " + ((float) (mCorrectGuesses) / (float)(mTotalGuesses)));
+                builder.setMessage(getString(R.string.results, mTotalGuesses, 100.0 * ((float) (mCorrectGuesses) / (float)(mTotalGuesses))));
+                builder.setCancelable(false);
                 builder.setPositiveButton(R.string.reset_quiz, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         resetQuiz();
                     }
                 });
+                AlertDialog dialog = builder.create();
+                dialog.show();
+            }
+            else {
+                Runnable runnable = new Runnable() {
+                    @Override
+                    public void run() {
+                        loadNextFlag();
+                    }
+                };
+                handler.postDelayed(runnable, 1200);
             }
         }
 
@@ -185,6 +195,7 @@ public class MainActivity extends AppCompatActivity {
             mAnswerTextView.setTextColor(ContextCompat.getColor(this, R.color.incorrect_answer));
             mAnswerTextView.setText(getString(R.string.incorrect_answer));
             guessedCountry.setEnabled(false);
+            mTotalGuesses++;
         }
 
 
