@@ -55,6 +55,16 @@ public class MainActivity extends AppCompatActivity {
     public static final String CHOICES = "pref_numberOfChoices";
     public static final String REGIONS = "pref_regions";
 
+    /**
+     * Called on the creation of the activity
+     * Loads any existing states of the activity from savedInstanceState
+     * Connects Views to their respective programmed variables
+     * Instantiates the {@link ArrayList}, {@link SecureRandom}, and {@link Handler}
+     * Loads a list ofd all the possible countries into mAllCountriesList using a {@link JSONLoader}
+     * calls resetQuiz()
+     *
+     * @param savedInstanceState Any previous run of the activity and its data set
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -236,19 +246,44 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Called on the creation of the options menu
+     * Inflates the created view
+     *
+     * @param menu The options menu in which you place your items.
+     * @return You must return true for the menu to be displayed; if you return false it will not be shown.
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_settings, menu);
         return  super.onCreateOptionsMenu(menu);
     }
 
+    /**
+     * This hook is called whenever an item in your options menu is selected.
+     * The default implementation simply returns false to have the normal processing happen
+     * (calling the item's Runnable or sending a message to its Handler as appropriate).
+     * Launches a content to {@link SettingsActivity}
+     *
+     * @param item The menu item that was selected.
+     * @return Return false to allow normal menu processing to proceed, true to consume it here.
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         startActivity(new Intent(this, SettingsActivity.class));
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * A callback to be invoked when a shared preference is changed.
+     */
     SharedPreferences.OnSharedPreferenceChangeListener mPreferenceChangeListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
+        /**
+         * Called when a shared preference is changed, added, or removed. This may be called even if a preference is set to its existing value.
+         *
+         * @param sharedPreferences The SharedPreferences that received the change.
+         * @param key The key of the preference that was changed, added, or removed.
+         */
         @Override
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
             switch (key) {
@@ -269,6 +304,9 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+    /**
+     * Updates the amount of question in the quiz
+     */
     private void updateChoices() {
         for (int i = 0; i < mLayouts.length; i++) {
             if (i < mChoices / 2) {
@@ -282,6 +320,9 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Updates the region which the quiz's countries are chosen from
+     */
     private void updateRegion() {
         if (mRegion.equals("All")) {
             mFilteredCountriesList = new ArrayList<>(mAllCountriesList);
