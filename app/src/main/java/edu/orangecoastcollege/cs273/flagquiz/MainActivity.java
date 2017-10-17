@@ -40,6 +40,16 @@ public class MainActivity extends AppCompatActivity {
     private ImageView mFlagImageView; // displays a flag
     private TextView mAnswerTextView; // displays correct answer
 
+    /**
+     * Called on the creation of the activity
+     * Loads any existing states of the activity from savedInstanceState
+     * Connects Views to their respective programmed variables
+     * Instantiates the {@link ArrayList}, {@link SecureRandom}, and {@link Handler}
+     * Loads a list ofd all the possible countries into mAllCountriesList using a {@link JSONLoader}
+     * calls resetQuiz()
+     *
+     * @param savedInstanceState Any previous run of the activity and its data set
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
